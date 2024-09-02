@@ -1,6 +1,7 @@
 import express, { urlencoded } from "express"
 import mongoose from "mongoose"
 import { Todo } from "./models/todo.js"
+import cors from "cors"
 const app = express()
 
 mongoose
@@ -14,7 +15,8 @@ mongoose
 
 app.set("view engine", "ejs")
 app.set("views", "./views")
-app.use(urlencoded())
+app.use(urlencoded({ extended: true }))
+app.use(cors())
 
 app.get("/", (req, res) => {
   res.render("index")
@@ -32,7 +34,7 @@ app.post("/new", async (req, res) => {
       body: req.body.body,
       date: new Date().toLocaleString({ timeZone: "Asia/Tokyo" }),
     })
-    res.redirect("/all")
+    res.redirect("/all?s=true")
   } catch (e) {
     res.status(402).json(e)
   }
@@ -40,7 +42,11 @@ app.post("/new", async (req, res) => {
 
 app.get("/all", async (req, res) => {
   const allTodo = await Todo.find({}) //* 全取得
-  res.json(allTodo)
+  if (req.query.s) {
+    res.json({ success: true, allTodo })
+  } else {
+    res.json(allTodo)
+  }
 })
 
 app.listen(3000, () => {

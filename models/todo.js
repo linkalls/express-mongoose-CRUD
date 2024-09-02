@@ -4,11 +4,11 @@ import { Schema } from "mongoose"
 const todoSchema = new Schema({
   title: {
     type: String,
-    required: true,
+    required: [true, 'title は必須です。'],
   },
   body: {
     type: String,
-    required: true,
+    required: [true,"内容は必要です"],
   },
   date: {
     type: Date,
