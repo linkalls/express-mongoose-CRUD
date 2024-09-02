@@ -21,17 +21,26 @@ app.get("/", (req, res) => {
 })
 
 app.post("/new", async (req, res) => {
-  const newTodo = new Todo({
-    title: req.body.title,
-    body: req.body.body,
-  })
-  await newTodo.save()
-  res.redirect("/all")
+  // const newTodo = new Todo({
+  //   title: req.body.title,
+  //   body: req.body.body
+  // })
+  // await newTodo.save()
+  try {
+    await Todo.create({
+      title: req.body.title,
+      body: req.body.body,
+      date: new Date().toLocaleString({ timeZone: "Asia/Tokyo" }),
+    })
+    res.redirect("/all")
+  } catch (e) {
+    res.status(402).json(e)
+  }
 })
 
-app.get("/all",async(req,res)=>{
-const allTodo = await Todo.find({}) //* 全取得
-res.json(allTodo)
+app.get("/all", async (req, res) => {
+  const allTodo = await Todo.find({}) //* 全取得
+  res.json(allTodo)
 })
 
 app.listen(3000, () => {
